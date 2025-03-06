@@ -12,8 +12,8 @@ func NewServer(protocol string, socket Socket) *Server {
 	}
 }
 
-func (s *Server) Start(address string) error {
-	if err := s.socket.Bind(address); err != nil {
+func (s *Server) Start(address string, port int) error {
+	if err := s.socket.Bind(address, port); err != nil {
 		return err
 	}
 	return s.socket.Listen()
