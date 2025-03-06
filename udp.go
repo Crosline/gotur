@@ -2,6 +2,7 @@ package gotur
 
 import (
 	"errors"
+	"strings"
 	"syscall"
 )
 
@@ -9,13 +10,23 @@ type UDPServer struct {
 	socket syscall.Handle
 }
 
-func (u *UDPServer) Bind(ip [4]byte, port int) error {
+func (u *UDPServer) Bind(ip string, port int) error {
 	handle, err := syscall.Socket(syscall.AF_INET, syscall.SOCK_DGRAM, syscall.IPPROTO_UDP)
 	if err != nil {
 		return err
 	}
 
 	u.socket = handle
+
+	ipBytes := strings.Split(ip, ".")
+	if len(ipBytes) != 4 {
+		return errors.New("invalid ip address")
+	}
+
+	ipAddr := [4]byte{}
+	for i, b := range ipBytes {
+		ipAddr[i] = byte.parse(b)
+	}
 
 	addr := syscall.SockaddrInet4{Port: port, Addr: ip}
 	return syscall.Bind(handle, &addr)
