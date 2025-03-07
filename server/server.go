@@ -16,7 +16,7 @@ type Server interface {
 	Handle(handler func(s.Socket))
 }
 
-func NewBaseServer(socket s.BaseSocket) *BaseServer {
+func NewBaseServer(socket s.Socket) *BaseServer {
 	return &BaseServer{
 		socket:     socket,
 		isRunning:  false,

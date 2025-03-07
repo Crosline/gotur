@@ -27,7 +27,7 @@ func newBaseSocket(family, socktype, proto int) (*BaseSocket, error) {
 type Socket interface {
 	Bind(string, int) error
 	Listen() error
-	Accept() (Socket, error)
+	Accept() (*BaseSocket, error)
 	Close() error
 	Receive([]byte) (int, *syscall.SockaddrInet4, error)
 	Send([]byte) error
