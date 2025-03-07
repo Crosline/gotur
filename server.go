@@ -1,20 +1,32 @@
 package gotur
 
-type Server struct {
-	protocol string
-	socket   Socket
+import (
+	s "github.com/crosline/gotur/socket"
+)
+
+type BaseServer struct {
+	socket s.BaseSocket
+	isRunning bool
+	handler func(s.Socket)	
 }
 
-func NewServer(protocol string, socket Socket) *Server {
-	return &Server{
-		protocol: protocol,
-		socket:   socket,
-	}
+type Server interface {
+	Start(address string, port int) error
+	Stop() error
+	Handle(handler func(s.Socket))
 }
 
-func (s *Server) Start(address string, port int) error {
-	if err := s.socket.Bind(address, port); err != nil {
-		return err
+func NewBaseServer(socket s.BaseSocket) *BaseServer {
+	return &BaseServer{
+		socket:     socket,
+		isRunning:  false,
 	}
-	return s.socket.Listen()
+}
+func (server *BaseServer) Handle(handler func(s.Socket)) {
+	server.handler = handler
+}
+
+func (server *BaseServer) Stop() error {
+	server.isRunning = false
+	return server.socket.Close()
 }
