@@ -1,4 +1,4 @@
-package gotur
+package socket
 
 import (
 	"errors"
