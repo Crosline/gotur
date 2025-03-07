@@ -1,8 +1,6 @@
 package socket
 
 import (
-	"errors"
-	"strings"
 	"syscall"
 )
 
@@ -21,17 +19,12 @@ func NewUDPSocket() (*UDPSocket, error) {
 
 func (socket *UDPSocket) Bind(address string, port int) error {
 	if socket.handle == 0 {
-		return errors.New("socket is not initialized")
+		return syscall.EINVAL
 	}
 	
-	ipBytes := strings.Split(address, ".")
-	if len(ipBytes) != 4 {
-		return errors.New("invalid ip address")
-	}
-
-	addr := [4]byte{}
-	for i, b := range ipBytes {
-		addr[i] = []byte(b)[0]
+	addr, err := ParseIPv4(address)
+	if err != nil {
+		return err
 	}
 
 	socketAddress := syscall.SockaddrInet4{Port: port, Addr: addr}
@@ -41,13 +34,14 @@ func (socket *UDPSocket) Bind(address string, port int) error {
 }
 
 func (socket *UDPSocket) Listen() error {
+	// UDP is connectionless, no need to listen
 	return nil
 }
 
-func (socket *UDPSocket) Accept() (*UDPSocket, error) {
+func (socket *UDPSocket) Accept() (Socket, error) {
+	// UDP is connectionless, just return self
 	return socket, nil
 }
-
 
 func (socket *UDPSocket) Receive(buffer []byte) (int, error) {
 	n, _, err := syscall.Recvfrom(socket.handle, buffer, 0)
@@ -60,4 +54,8 @@ func (socket *UDPSocket) Receive(buffer []byte) (int, error) {
 
 func (socket *UDPSocket) Send(data []byte) error {
 	return syscall.Sendto(socket.handle, data, 0, &socket.socketAddress)
+}
+
+func (socket *UDPSocket) SetRemoteAddress(addr syscall.SockaddrInet4) {
+	socket.socketAddress = addr
 }

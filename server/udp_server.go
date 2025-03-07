@@ -4,44 +4,44 @@ import (
 	s "github.com/crosline/gotur/socket"
 )
 
+type UDPServer struct {
+	BaseServer
+}
 
-func NewUDPServer() (*BaseServer, error) {
-	// Create the UDP socket internally
+func NewUDPServer() (*UDPServer, error) {
 	socket, err := s.NewUDPSocket()
 	if err != nil {
 		return nil, err
 	}
 	
-	// Note: socket implements the Socket interface, so this works
 	baseServer := NewBaseServer(socket)
+	return &UDPServer{
+		BaseServer: *baseServer,
+	}, nil
 }
 
-// Start starts the UDP server
-func (s *UDPServer) Start(address string, port int) error {
-	if err := s.socket.Bind(address, port); err != nil {
+func (server *UDPServer) Start(address string, port int) error {
+	if err := server.socket.Bind(address, port); err != nil {
 		return err
 	}
 	
-	s.isRunning = true
+	server.isRunning = true
 	
 	go func() {
 		buffer := make([]byte, 4096)
-		for s.isRunning {
-			n, err := s.socket.Receive(buffer)
+		for server.isRunning {
+			n, err := server.socket.Receive(buffer)
 			if err != nil {
-				// Log error or handle it
+				// Could log error here
 				continue
 			}
 			
-			if s.handler != nil {
+			if server.handler != nil {
 				// Create a copy of the buffer to avoid data races
 				data := make([]byte, n)
 				copy(data, buffer[:n])
 				
-				go func() {
-					// For UDP, we just pass the original socket
-					s.handler(s.socket)
-				}()
+				go server.handler(server.socket)
 			}
 		}
 	}()
