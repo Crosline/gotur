@@ -11,7 +11,7 @@ type UDPSocket struct {
 }
 
 func NewUDPSocket() (*UDPSocket, error) {
-	socket, err := NewBaseSocket(syscall.AF_INET, syscall.SOCK_DGRAM, syscall.IPPROTO_UDP)
+	socket, err := newBaseSocket(syscall.AF_INET, syscall.SOCK_DGRAM, syscall.IPPROTO_UDP)
 	if err != nil {
 		return nil, err
 	}

@@ -10,7 +10,7 @@ type BaseSocket struct {
 	socketAddress syscall.SockaddrInet4
 }
 
-func NewBaseSocket(family, socktype, proto int) (*BaseSocket, error) {
+func newBaseSocket(family, socktype, proto int) (*BaseSocket, error) {
 	handle, err := syscall.Socket(family, socktype, syscall.IPPROTO_UDP)
 	if err != nil {
 		return nil, err
@@ -32,6 +32,7 @@ type Socket interface {
 	Receive([]byte) (int, *syscall.SockaddrInet4, error)
 	Send([]byte) error
 }
+
 
 func (socket *BaseSocket) Close() error {
 	return syscall.Close(socket.handle)
