@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-type TCPServer struct {}
+type TCPServer struct{}
 
 func (t *TCPServer) Bind(address string) error {
 	return nil

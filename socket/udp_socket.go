@@ -21,7 +21,7 @@ func (socket *UDPSocket) Bind(address string, port int) error {
 	if socket.handle == 0 {
 		return syscall.EINVAL
 	}
-	
+
 	addr, err := ParseIPv4(address)
 	if err != nil {
 		return err

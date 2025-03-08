@@ -23,22 +23,22 @@ func main() {
 	server.Handle(func(socket s.Socket) {
 		// Buffer to hold received data
 		buffer := make([]byte, 1024)
-		
+
 		// Receive data
 		n, err := socket.Receive(buffer)
 		if err != nil {
 			log.Printf("Error receiving data: %v", err)
 			return
 		}
-		
+
 		// Log received message
 		message := string(buffer[:n])
 		log.Printf("Received message: %s", message)
-		
+
 		// Prepare response
-		response := fmt.Sprintf("Echo: %s (received at %s)", 
+		response := fmt.Sprintf("Echo: %s (received at %s)",
 			message, time.Now().Format(time.RFC3339))
-		
+
 		// Send response
 		if err := socket.Send([]byte(response)); err != nil {
 			log.Printf("Error sending response: %v", err)
@@ -49,7 +49,7 @@ func main() {
 	if err := server.Start("127.0.0.1", 8000); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
-	
+
 	log.Println("UDP Server started on 127.0.0.1:8000")
 	log.Println("Press Ctrl+C to stop the server")
 
