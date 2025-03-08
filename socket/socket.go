@@ -6,7 +6,7 @@ import (
 )
 
 type BaseSocket struct {
-	handle        syscall.Handle
+	handle        int
 	socketFamily  int
 	socketType    int
 	socketProto   int
@@ -18,7 +18,7 @@ func newBaseSocket(family, socktype, proto int) (*BaseSocket, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return &BaseSocket{
 		handle:       handle,
 		socketFamily: family,
@@ -46,7 +46,7 @@ func ParseIPv4(ipStr string) ([4]byte, error) {
 	if ip == nil {
 		return [4]byte{}, &net.AddrError{Err: "invalid IPv4 address", Addr: ipStr}
 	}
-	
+
 	var addr [4]byte
 	copy(addr[:], ip)
 	return addr, nil
